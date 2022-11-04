@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <identifier>bragging_data</identifier>
+  <mediatype>data</mediatype>
+  <collection>opensource_media</collection>
+  <collection>community</collection>
+  <description>&lt;span style="color:rgb(44,44,44);font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;font-size:14px;background-color:rgb(255,255,255);"&gt;Data for M. Jin, D. &lt;/span&gt;&lt;span style="color:rgb(44,44,44);font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;font-size:14px;background-color:rgb(255,255,255);"&gt;&lt;font color="#2c2c2c" face="Helvetica Neue, Helvetica, Arial, sans-serif"&gt;Preoţiuc-Pietro, &lt;/font&gt;&lt;/span&gt;&lt;span style="color:rgb(44,44,44);font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;font-size:14px;background-color:rgb(255,255,255);"&gt;A.S. Doğruöz and &lt;/span&gt;&lt;span style="color:rgb(44,44,44);font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;font-size:14px;background-color:rgb(255,255,255);"&gt;&lt;font color="#2c2c2c" face="Helvetica Neue, Helvetica, Arial, sans-serif"&gt;N. Aletras (2022). Automatic Identification and Classification of Bragging in Social Media. In ACL 2022.&lt;/font&gt;&lt;/span&gt;&lt;div&gt;&lt;font color="#2c2c2c" face="Helvetica Neue, Helvetica, Arial, sans-serif"&gt;&lt;span style="font-size:14px;background-color:rgb(255,255,255);"&gt;Sampling consists of two sampling strategies mentioned in the paper: random sampling and keyword-based sampling. Round consists of two annotating strategies: round 1 refers to tweets that were annotated by two annotators or more while round 2 refers to tweets that were annotated by one annotator.&lt;/span&gt;&lt;/font&gt;&lt;/div&gt;</description>
+  <scanner>Internet Archive HTML5 Uploader 1.6.4</scanner>
+  <subject>nlp</subject>
+  <subject>social media</subject>
+  <subject>twitter</subject>
+  <subject>bragging</subject>
+  <subject>computational linguistic</subject>
+  <title>bragging_data</title>
+  <uploader>malijin26@gmail.com</uploader>
+  <publicdate>2022-02-25 14:18:12</publicdate>
+  <addeddate>2022-02-25 14:18:12</addeddate>
+  <curation>[curator]validator@archive.org[/curator][date]20220225141827[/date][comment]checked for malware[/comment]</curation>
+</metadata>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files>
+  <file name="bragging_data.csv" source="original">
+    <mtime>1649535384</mtime>
+    <size>971410</size>
+    <md5>2d09a32e1404ec7d7c93ee9824d71050</md5>
+    <crc32>82d0deff</crc32>
+    <sha1>ef511d2903e67db67dc0dbb17526359a1332c894</sha1>
+    <format>Comma-Separated Values</format>
+    <viruscheck>1649535469</viruscheck>
+  </file>
+  <file name="bragging_data_archive.torrent" source="metadata">
+    <btih>3aa35291a6199b752db413d06367774aa75b83a9</btih>
+    <mtime>1649535474</mtime>
+    <size>1659</size>
+    <md5>f2a402e1bff5d380f04489ddfcc9aa2a</md5>
+    <crc32>3054ede6</crc32>
+    <sha1>c06719b7cc29a52ecffd3f4cebba4c641a217038</sha1>
+    <format>Archive BitTorrent</format>
+  </file>
+  <file name="bragging_data_files.xml" source="original">
+    <format>Metadata</format>
+    <md5>9ff1f248db54a7f85213a1a6797a0ddb</md5>
+    <summation>md5</summation>
+  </file>
+  <file name="bragging_data_meta.sqlite" source="original">
+    <mtime>1649535461</mtime>
+    <size>28672</size>
+    <md5>b246761ba2fa751e03efb40d6299974b</md5>
+    <crc32>3ff20413</crc32>
+    <sha1>e377817b84b7640c67662140066e65cc6b6278d6</sha1>
+    <format>Metadata</format>
+  </file>
+  <file name="bragging_data_meta.xml" source="original">
+    <mtime>1645800300</mtime>
+    <size>2256</size>
+    <md5>6831076de233c121c3bcc73617ff0906</md5>
+    <crc32>edd14025</crc32>
+    <sha1>146d81d7c89cf725ee2dec26887a7cc5d721a687</sha1>
+    <format>Metadata</format>
+  </file>
+</files>
