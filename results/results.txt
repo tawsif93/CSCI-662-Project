@@ -1,0 +1,31 @@
+-----------------------
+bertweet_liwc_binary
+-----------------------
+test_acc: 0.9351432880844646
+test_precision: 0.7645423148047428
+test_recall: 0.6663645303347727
+test_f1: 0.7017473656129117
+              precision    recall  f1-score   support
+
+     class 0       0.95      0.98      0.97      2462
+     class 1       0.58      0.35      0.44       190
+
+    accuracy                           0.94      2652
+   macro avg       0.76      0.67      0.70      2652
+weighted avg       0.92      0.94      0.93      2652
+
+-----------------------
+bertweet_bbase_binary
+-----------------------
+est_acc: 0.917420814479638
+test_precision: 0.6822407498885529
+test_recall: 0.6616764290905981
+test_f1: 0.6711426838776747
+              precision    recall  f1-score   support
+
+     class 0       0.95      0.96      0.96      2462
+     class 1       0.41      0.36      0.39       190
+
+    accuracy                           0.92      2652
+   macro avg       0.68      0.66      0.67      2652
+weighted avg       0.91      0.92      0.91      265
