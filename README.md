@@ -1,6 +1,7 @@
 # CSCI-662-Project
 This is a reproduction study conducted on the paper : Automatic Identification and Classification of Bragging in Social Media (https://aclanthology.org/2022.acl-long.273.pdf)
 The results on this study aligns with the claims made on the original paper.
+The dataset used in this study: https://archive.org/details/bragging_data
 
 1. Work folder consists of all the codes used for this study
 2. Work/Existing Work folder consists of the codes received from the original study
