@@ -1,0 +1,67 @@
+-----------------------
+bertweet_liwc_binary
+-----------------------
+test_acc: 0.9351432880844646
+test_precision: 0.7645423148047428
+test_recall: 0.6663645303347727
+test_f1: 0.7017473656129117
+              precision    recall  f1-score   support
+
+     class 0       0.95      0.98      0.97      2462
+     class 1       0.58      0.35      0.44       190
+
+    accuracy                           0.94      2652
+   macro avg       0.76      0.67      0.70      2652
+weighted avg       0.92      0.94      0.93      2652
+
+-----------------------
+bertweet_bbase_binary
+-----------------------
+test_acc: 0.917420814479638
+test_precision: 0.6822407498885529
+test_recall: 0.6616764290905981
+test_f1: 0.6711426838776747
+              precision    recall  f1-score   support
+
+     class 0       0.95      0.96      0.96      2462
+     class 1       0.41      0.36      0.39       190
+
+    accuracy                           0.92      2652
+   macro avg       0.68      0.66      0.67      2652
+weighted avg       0.91      0.92      0.91      265
+
+---------------
+BERT_BASE
+----------------
+train loss: 0.1098882101546481
+valid loss: 0.2958798791681017
+dev_f1: 0.6233518862090291
+test_acc: 0.920814479638009
+test_precision: 0.567990832696715
+test_recall: 0.5129377057591175
+test_f1: 0.5105807086614172
+              precision    recall  f1-score   support
+
+     class 0       0.93      0.99      0.96      2462
+     class 1       0.21      0.04      0.06       190
+
+    accuracy                           0.92      2652
+   macro avg       0.57      0.51      0.51      2652
+weighted avg       0.88      0.92      0.89      2652
+
+
+--------------------
+RoBERTa_Base
+--------------------
+test_acc: 0.915158371040724
+test_precision: 0.6710076483767843
+test_recall: 0.6483154474325538
+test_f1: 0.658580433860902
+              precision    recall  f1-score   support
+
+     class 0       0.95      0.96      0.95      2462
+     class 1       0.39      0.34      0.36       190
+
+    accuracy                           0.92      2652
+   macro avg       0.67      0.65      0.66      2652
+weighted avg       0.91      0.92      0.91      2652
