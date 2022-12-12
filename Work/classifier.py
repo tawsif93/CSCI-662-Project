@@ -1,8 +1,10 @@
 import torch
+import argparse
 from torch.utils.data import TensorDataset, DataLoader, RandomSampler, SequentialSampler
 import pandas as pd
 from sklearn.model_selection import StratifiedKFold, train_test_split
 import numpy as np
+from roberta_classification_model import RobertaClassificationModel
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 from transformers import RobertaForSequenceClassification, RobertaTokenizer, RobertaModel
 from transformers import BertForSequenceClassification, BertTokenizer, BertModel
@@ -50,19 +52,19 @@ class Classifier:
         return index_training, label_training, features_training, index_testing, label_testing, features_testing, text_testing_print
     
     def get_tokenizer(self, selected_model = 1):
-        if selected_model == 1:
-            tokenizer = AutoTokenizer.from_pretrained("vinai/bertweet-base", use_fast=False)
-        elif selected_model == 2:
+        if(selected_model == 1):
             tokenizer = BertTokenizer.from_pretrained('bert-base-uncased', do_lower_case=True)
-        else:
+        elif selected_model == 2:
             tokenizer = RobertaTokenizer.from_pretrained('roberta-base')
+        elif selected_model == 3:
+            tokenizer = AutoTokenizer.from_pretrained("vinai/bertweet-base", use_fast=False)
         
         return tokenizer
     
-    def tokenize(self, texts, MAX_LEN, selectedTokenizer = 1):
+    def tokenize(self, texts, MAX_LEN, selectedModel):
         texts = ['[CLS] ' + str(sentence) + ' [SEP]' for sentence in texts]
         
-        tokenizer = self.get_tokenizer(selectedTokenizer)
+        tokenizer = self.get_tokenizer(selectedModel)
         tokenized_texts = [tokenizer.tokenize(sent) for sent in texts]
 
         # Use the BERT tokenizer to convert the tokens to their index numbers in the BERT vocabulary
@@ -95,11 +97,23 @@ class Classifier:
             
         return text_training, mask_training, text_testing, mask_testing
     
-    
-    def final_step(self, batch_size = 32, n_epoch = 12):
+    def getModel(self, selectedModel):
+        if(selectedModel == 1):
+            model_roberta = BertForSequenceClassification.from_pretrained('bert-base-uncased', num_labels=2)
+        elif selectedModel == 2:
+            model_roberta = RobertaForSequenceClassification.from_pretrained('roberta-base', num_labels=2)
+        elif selectedModel == 3:
+            model_roberta = RobertaClassificationModel()
+
+        return model_roberta
+         
+    def final_step(self, batch_size, n_epoch, lr, selectedModel):
         # batch_size = 32
         # n_epoch = 12
-        
+        is_cuda_available = False 
+        if torch.cuda.is_available():
+            is_cuda_available = True
+            
         text_training = self.text_training
         text_testing = self.text_testing
         mask_training = self.mask_training
@@ -115,17 +129,33 @@ class Classifier:
         y_train = label_training
         
         print(len(x_train))
-        x_dev, x_testing, y_dev, y_testing, features_dev, features_testing, mask_dev, mask_testing = train_test_split(text_testing, label_testing, features_testing, mask_testing, test_size=0.8, random_state=0, stratify=label_testing)
+        
+        if selectedModel == 3:
+            x_dev, x_testing, y_dev, y_testing, features_dev, features_testing, mask_dev, mask_testing = train_test_split(text_testing, label_testing, features_testing, mask_testing, test_size=0.8, random_state=0, stratify=label_testing)
+        else:
+            x_dev, x_testing, y_dev, y_testing = train_test_split(text_testing, label_testing, test_size=0.8, random_state=0, stratify=label_testing)
 
 
         # sklearn
         weight_loss = class_weight.compute_class_weight(class_weight='balanced', classes=np.unique(y_train), y=y_train)
-        weight_loss = torch.tensor(weight_loss, dtype=torch.float32).cpu()
-
-        model_roberta = BertForSequenceClassification.from_pretrained('bert-base-uncased', num_labels=2).cpu()
+        #weight_loss = torch.tensor(weight_loss, dtype=torch.float32).cpu()
+        
+        if(is_cuda_available):
+            weight_loss = torch.tensor(weight_loss, dtype=torch.float32).cuda()
+        else:
+            weight_loss = torch.tensor(weight_loss, dtype=torch.float32).cpu()
+            
+        #model_roberta = BertForSequenceClassification.from_pretrained('bert-base-uncased', num_labels=2).cpu()
         #model_roberta = RobertaForSequenceClassification.from_pretrained('roberta-base', num_labels=2).cuda()
         #model_roberta = RobertaClassificationModel().cpu()
         #model_roberta.cuda()
+        
+        model_roberta = self.getModel(selectedModel)
+        if is_cuda_available:
+            model_roberta.cuda()
+        else:
+            model_roberta.cpu()
+        
 
         param_optimizer = list(model_roberta.named_parameters())
         no_decay = ['bias', 'LayerNorm.weight']        
@@ -135,7 +165,7 @@ class Classifier:
                 {'params': [p for n, p in model_roberta.named_parameters() if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
                 ]
 
-        optimizer = AdamW(optimizer_grouped_parameters, lr=3e-6)
+        optimizer = AdamW(optimizer_grouped_parameters, lr)
         criterion = nn.CrossEntropyLoss(weight=weight_loss, size_average=None, ignore_index=-100, reduce=None, reduction='mean')
 
         x_train = torch.LongTensor(x_train)
@@ -151,11 +181,13 @@ class Classifier:
         mask_dev = torch.LongTensor(mask_dev)
 
         # Pack to dataLoader
-        train_data = TensorDataset(x_train, features_train, mask_train, y_train)
+        train_data = TensorDataset(x_train, features_train, mask_train, y_train) if selectedModel == 3 else TensorDataset(x_train, mask_train, y_train)
+        # train_data = TensorDataset(x_train, features_train, mask_train, y_train)
         train_sampler = RandomSampler(train_data)
         train_dataloader = DataLoader(train_data, sampler=train_sampler, batch_size=batch_size)
             
-        dev_data = TensorDataset(x_dev, features_dev, mask_dev, y_dev)
+        # dev_data = TensorDataset(x_dev, features_dev, mask_dev, y_dev)
+        dev_data = TensorDataset(x_dev, features_dev, mask_dev, y_dev) if selectedModel == 3 else TensorDataset(x_dev, mask_dev, y_dev)
         dev_sampler = RandomSampler(dev_data)
         dev_dataloader = DataLoader(dev_data, sampler=dev_sampler, batch_size=batch_size) 
 
@@ -175,17 +207,25 @@ class Classifier:
                 # Add batch to GPU
                 batch = tuple(t.to(self.device) for t in batch)
 
+                if(selectedModel == 3):
+                    b_input_ids, b_input_features, b_input_mask, b_labels = batch
+                    optimizer.zero_grad()
+                    outputs = model_roberta(input_ids=b_input_ids, input_feature=b_input_features, attention_mask=b_input_mask, labels=b_labels)
+                else:
+                    b_input_ids, b_input_mask, b_labels = batch
+                    optimizer.zero_grad()
+                    outputs = model_roberta(input_ids=b_input_ids, attention_mask=b_input_mask, labels=b_labels)
                 # Unpack the inputs from dataloader
-                b_input_ids, b_input_features, b_input_mask, b_labels = batch
+                #b_input_ids, b_input_features, b_input_mask, b_labels = batch
 
                 # Clear out the gradients (by default they accumulate)
-                optimizer.zero_grad()
+                #optimizer.zero_grad()
                 
                 # Generate combined representations      
 
                 
                 #outputs = model_roberta(input_ids=b_input_ids, input_feature=b_input_features, attention_mask=b_input_mask, labels=b_labels)
-                outputs = model_roberta(input_ids = b_input_ids, labels=b_labels)
+                #outputs = model_roberta(input_ids= b_input_ids, labels=b_labels)
                 loss = outputs[0]
                 logits = outputs[1]
                 #loss = criterion(logits, b_labels)
@@ -216,7 +256,13 @@ class Classifier:
                 batch = tuple(t.to(self.device) for t in batch)
 
                 # Unpack the inputs from dataloader
-                b_input_ids, b_input_features, b_input_mask, b_labels = batch
+                # b_input_ids, b_input_features, b_input_mask, b_labels = batch
+                
+                if(selectedModel == 3):
+                    b_input_ids, b_input_features, b_input_mask, b_labels = batch
+                else:
+                    b_input_ids, b_input_mask, b_labels = batch
+                    
                 
             
                 with torch.no_grad():
@@ -224,7 +270,13 @@ class Classifier:
                     # Generate combined representations
                     
                     #outputs = model_roberta(input_ids=b_input_ids, input_feature=b_input_features, attention_mask=b_input_mask, labels=b_labels)
-                    outputs = model_roberta(input_ids=b_input_ids, labels=b_labels)
+                    # outputs = model_roberta(input_ids=b_input_ids, labels=b_labels)
+                    
+                    if(selectedModel == 3):
+                        outputs = model_roberta(input_ids=b_input_ids, input_feature=b_input_features, attention_mask=b_input_mask, labels=b_labels)
+                    else:
+                        outputs = model_roberta(input_ids=b_input_ids, attention_mask=b_input_mask, labels=b_labels)
+                    
                     loss = outputs[0]
                     logits = outputs[1]
                     #loss = criterion(logits, b_labels)
@@ -260,7 +312,8 @@ class Classifier:
         features_testing = torch.FloatTensor(features_testing)
         mask_testing = torch.LongTensor(mask_testing)
             
-        test_data = TensorDataset(x_testing, features_testing, mask_testing, y_testing) 
+        # test_data = TensorDataset(x_testing, features_testing, mask_testing, y_testing) 
+        test_data = TensorDataset(x_testing, features_testing, mask_testing, y_testing) if selectedModel == 3 else TensorDataset(x_testing, mask_testing, y_testing)
         test_sampler = SequentialSampler(test_data)
         test_dataloader = DataLoader(test_data, sampler=test_sampler, batch_size=batch_size)
 
@@ -275,12 +328,21 @@ class Classifier:
             # Add batch to GPU
             batch = tuple(t.to(self.device) for t in batch)
             # Unpack the inputs from dataloader
-            b_input_ids, b_input_features, b_input_mask, b_labels = batch
+            # b_input_ids, b_input_features, b_input_mask, b_labels = batch
+            
+            if(selectedModel == 3):
+                b_input_ids, b_input_features, b_input_mask, b_labels = batch
+            else:
+                b_input_ids, b_input_mask, b_labels = batch
             
             with torch.no_grad():
                 # Forward pass, calculate logit predictions
                 #outputs = bragging_model(input_ids=b_input_ids, input_feature=b_input_features, attention_mask=b_input_mask)
-                outputs = bragging_model(input_ids=b_input_ids)
+                # outputs = bragging_model(input_ids=b_input_ids)
+                if(selectedModel == 3):
+                    outputs = bragging_model(input_ids=b_input_ids, input_feature=b_input_features, attention_mask=b_input_mask)
+                else:
+                    outputs = bragging_model(input_ids=b_input_ids, attention_mask=b_input_mask)
                 logits = outputs[0]
             # Move logits and labels to CPU
             logits = logits.detach().cpu().numpy()
@@ -302,7 +364,7 @@ class Classifier:
         print(metrics.classification_report(test_targets, test_predictions, target_names=target_names))
         
         
-    def main(self):
+    def main(self, batch_size = 32, n_epoch = 12, lr =3e-6, selectedModel = 3, training_data = 'bragging_data.csv'):
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         # n_gpu = torch.cuda.device_count()
         # torch.cuda.get_device_name(0)
@@ -318,7 +380,7 @@ class Classifier:
         MAX_LEN = 50
         
         
-        df = pd.read_csv('bragging_data.csv', header=0, names=['id', 'text', 'sampling', 'round_no', 'label'])
+        df = pd.read_csv(training_data, header=0, names=['id', 'text', 'sampling', 'round_no', 'label'])
 
         index_training, self.label_training, self.features_training = [], [], []
         index_testing, self.label_testing, self.features_testing = [], [], []
@@ -348,10 +410,27 @@ class Classifier:
                 self.features_testing.append(features[i])
                 
         
-        input_ids = self.tokenize(self, texts, MAX_LEN, selectedTokenizer = 1)
+        input_ids = self.tokenize(texts, MAX_LEN, selectedModel)
         attention_masks = self.create_attention_mask(input_ids)
         self.text_training, self.mask_training, self.text_testing, self.mask_testing = self.construct_train_test(index_training, index_testing, input_ids, attention_masks)
-        self.final_step(batch_size = 32, n_epoch = 12)
+        
+        self.final_step(batch_size, n_epoch, lr, selectedModel)
+        
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-i', type=str, help='training file')
+    parser.add_argument('-o', type=str, help='output model file')
+    parser.add_argument('-b', type=str, help='Batch size')
+    parser.add_argument('-l', type=str, help='learning rate')
+    parser.add_argument('-e', type=str, help='number of epoch')
+    parser.add_argument('-m', type=str, help='model selection, 1= bert, 2=roberta, 3= bertweet, 4= bertweet-liwc')
+    args = parser.parse_args()
+
+    classifier = Classifier()
+    # classifier.main(batch_size = args.b, n_epoch = args.e, lr = args.l, selectedModel = args.m, training_data = args.i)
+    classifier.main()
+
     
-    
+
     
