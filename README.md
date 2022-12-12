@@ -16,7 +16,8 @@ The results on this study aligns with the claims made on the original paper.
     parser.add_argument('-l', type=str, help='learning rate')
     parser.add_argument('-e', type=str, help='number of epoch')
     parser.add_argument('-m', type=str, help='model selection, 1= bert, 2=roberta, 3= bertweet, 4= bertweet-liwc')
-  Sample command to run the file: python3 classifier.py -i bragging_data.csv -o bragging.pkl -b 32 -l 3e-6 -e 12 -m 1
+  
+Sample command to run the file: **python3 classifier.py -i bragging_data.csv -o bragging.pkl -b 32 -l 3e-6 -e 12 -m 1**
 
 Models link:
 https://uscedu-my.sharepoint.com/:f:/g/personal/fabiha_usc_edu/EvOxxCg_WdBAgP6G7xZZvfgBV0uHm16Ak7UXlxOSELxn-w?e=uNJfrX
