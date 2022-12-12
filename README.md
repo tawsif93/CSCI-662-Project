@@ -8,9 +8,11 @@ The dataset used in this study: https://archive.org/details/bragging_data
 3. bragging_data folder contains the original dataset, plus the additional dataset injected on the original data
 
 **Description of the codes (inside work folder)**
-1. data.py consists of the newly collected data
-2. write_excel.py is used to pre-process the text on the newly collected tweets according to the description on the original paper
-3. classifier.py is the main file that will run the experiments. The file requires following parameteres:
+1. binary_bertweet_liwc.ipynb is the slightly modified file that we recieved from the authors and used to reproduce the result
+2. binary_bert.ipynb, binary_bertweet.ipynb, binary_roberta.ipynb are the codes that we modified to reproduce the base models
+3. data.py consists of the newly collected data
+4. write_excel.py is used to pre-process the text on the newly collected tweets according to the description on the original paper
+5. classifier.py is the main file that will run the experiments. The file requires following parameteres:
     parser.add_argument('-i', type=str, help='training file')
     parser.add_argument('-o', type=str, help='output model file')
     parser.add_argument('-b', type=str, help='Batch size')
