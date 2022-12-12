@@ -1,3 +1,6 @@
+import time
+from datetime import datetime
+
 import torch
 import argparse
 from torch.utils.data import TensorDataset, DataLoader, RandomSampler, SequentialSampler
@@ -196,6 +199,8 @@ class Classifier:
 
         for epoch in range(n_epoch):
             print(epoch)
+            start_time = time.perf_counter()
+            cur_time = datetime.now().strftime('%m-%d-%H:%M:%S')
 
             # Training
             model_roberta.train()
@@ -305,7 +310,10 @@ class Classifier:
             if valid_loss < previous_valid_loss:
                 previous_valid_loss = valid_loss
                 torch.save(model_roberta, './bragging.pkl')
-                print("saved")             
+                print("saved")
+
+            after_training = time.perf_counter()
+            print(f"Spent {after_training - start_time} seconds.")             
         
         x_testing = torch.LongTensor(x_testing)
         y_testing = torch.LongTensor(y_testing)
@@ -364,7 +372,7 @@ class Classifier:
         print(metrics.classification_report(test_targets, test_predictions, target_names=target_names))
         
         
-    def main(self, batch_size = 32, n_epoch = 12, lr =3e-6, selectedModel = 3, training_data = '../bragging_data/bragging_data_new.csv'):
+    def main(self, batch_size = 32, n_epoch = 12, lr =3e-6, selectedModel = 3, training_data = '../bragging_data/bragging_data.csv'):
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         # n_gpu = torch.cuda.device_count()
         # torch.cuda.get_device_name(0)
