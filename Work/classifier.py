@@ -364,7 +364,7 @@ class Classifier:
         print(metrics.classification_report(test_targets, test_predictions, target_names=target_names))
         
         
-    def main(self, batch_size = 32, n_epoch = 12, lr =3e-6, selectedModel = 3, training_data = 'bragging_data.csv'):
+    def main(self, batch_size = 32, n_epoch = 12, lr =3e-6, selectedModel = 3, training_data = '../bragging_data/bragging_data_new.csv'):
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         # n_gpu = torch.cuda.device_count()
         # torch.cuda.get_device_name(0)
