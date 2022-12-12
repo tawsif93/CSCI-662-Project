@@ -1,5 +1,5 @@
 numpy
 transformers
 tensorflow
-pytorch
+torch
 pandas
